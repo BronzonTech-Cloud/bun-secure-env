@@ -12,7 +12,7 @@
     }
   },
   "files": [
-    "dist"
+    "dist/*"
   ],
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target bun && bun x tsc -p tsconfig.build.json",
@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bronzontech-cloud/bun-secure-env.git"
+    "url": "git+https://github.com/BronzonTech-Cloud/bun-secure-env.git"
   },
   "bugs": {
-    "url": "https://github.com/bronzontech-cloud/bun-secure-env/issues"
+    "url": "https://github.com/BronzonTech-Cloud/bun-secure-env/issues"
   },
-  "homepage": "https://github.com/bronzontech-cloud/bun-secure-env#readme",
+  "homepage": "https://github.com/BronzonTech-Cloud/bun-secure-env#readme",
   "keywords": [
     "bun",
     "env",
