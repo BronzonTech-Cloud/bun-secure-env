@@ -36,14 +36,18 @@ export async function createEnv<T extends ZodRawShape>(options: {
 
   const keyBytes = validateKey(vaultKey);
   // decrypt-only — do not pass to encrypt(); import a separate key for that
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    keyBytes as unknown as Uint8Array<ArrayBuffer>,
-    { name: "AES-GCM" },
-    false,
-    ["decrypt"]
-  );
-  keyBytes.fill(0);
+  let cryptoKey: CryptoKey;
+  try {
+    cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      keyBytes as unknown as Uint8Array<ArrayBuffer>,
+      { name: "AES-GCM" },
+      false,
+      ["decrypt"]
+    );
+  } finally {
+    keyBytes.fill(0);
+  }
 
   const vaultPath = options.vault ?? ".env.vault";
   const baseVault = await readVaultFile(vaultPath, false);
@@ -78,14 +82,18 @@ export async function encryptEnv(options: {
 }): Promise<void> {
   const key = options.key;
   const keyBytes = validateKey(key);
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    keyBytes as unknown as Uint8Array<ArrayBuffer>,
-    { name: "AES-GCM" },
-    false,
-    ["encrypt"]
-  );
-  keyBytes.fill(0);
+  let cryptoKey: CryptoKey;
+  try {
+    cryptoKey = await crypto.subtle.importKey(
+      "raw",
+      keyBytes as unknown as Uint8Array<ArrayBuffer>,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"]
+    );
+  } finally {
+    keyBytes.fill(0);
+  }
 
   const inputFile = Bun.file(options.input);
   if (!(await inputFile.exists())) {

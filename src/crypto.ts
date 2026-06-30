@@ -25,14 +25,17 @@ export async function encrypt(
 
   if (typeof key === "string") {
     const keyBytes = validateKey(key);
-    cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      keyBytes as unknown as Uint8Array<ArrayBuffer>,
-      { name: "AES-GCM" },
-      false,
-      ["encrypt"]
-    );
-    keyBytes.fill(0);
+    try {
+      cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        keyBytes as unknown as Uint8Array<ArrayBuffer>,
+        { name: "AES-GCM" },
+        false,
+        ["encrypt"]
+      );
+    } finally {
+      keyBytes.fill(0);
+    }
   } else {
     cryptoKey = key;
   }
@@ -78,14 +81,17 @@ export async function decrypt(
   let cryptoKey: CryptoKey;
   if (typeof key === "string") {
     const keyBytes = validateKey(key);
-    cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      keyBytes as unknown as Uint8Array<ArrayBuffer>,
-      { name: "AES-GCM" },
-      false,
-      ["decrypt"]
-    );
-    keyBytes.fill(0);
+    try {
+      cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        keyBytes as unknown as Uint8Array<ArrayBuffer>,
+        { name: "AES-GCM" },
+        false,
+        ["decrypt"]
+      );
+    } finally {
+      keyBytes.fill(0);
+    }
   } else {
     cryptoKey = key;
   }

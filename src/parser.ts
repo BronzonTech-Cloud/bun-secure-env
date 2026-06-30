@@ -4,12 +4,17 @@
  * @returns The unescaped string
  */
 function unescapeDoubleQuoted(val: string): string {
-  return val
-    .replace(/\\n/g, "\n")
-    .replace(/\\r/g, "\r")
-    .replace(/\\t/g, "\t")
-    .replace(/\\"/g, '"')
-    .replace(/\\\\/g, "\\");
+  // Single-pass replacement: process all escape sequences atomically so that
+  // earlier substitutions (e.g. \n → newline) cannot corrupt later ones
+  // (e.g. \\ → \).  The alternation matches \\ first, preserving literals
+  // like \\n (backslash-n) before \n (newline) is ever considered.
+  return val.replace(/\\(\\|n|r|t|")/g, (_, ch) => {
+    if (ch === "n") return "\n";
+    if (ch === "r") return "\r";
+    if (ch === "t") return "\t";
+    if (ch === '"') return '"';
+    return "\\"; // ch === "\\"
+  });
 }
 
 /**
