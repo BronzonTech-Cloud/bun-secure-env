@@ -31,7 +31,9 @@ export function validateKey(key: unknown): Uint8Array {
         `Vault key must decode to exactly 32 bytes (decoded to ${decoded.length} bytes).`
       );
     }
-    return new Uint8Array(decoded);
+    // Return the Buffer itself (Buffer extends Uint8Array) so the caller
+    // can zero the same backing memory via fill(0).
+    return decoded;
   } catch (err) {
     if (err instanceof VaultKeyError) {
       throw err;

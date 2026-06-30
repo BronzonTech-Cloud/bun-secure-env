@@ -22,7 +22,7 @@ describe("crypto.ts", () => {
     const plaintext = "SECRET=my-secret";
     const vault = await encrypt(plaintext, key1);
 
-    expect(decrypt(vault, key2)).rejects.toThrow(DecryptionError);
+    await expect(decrypt(vault, key2)).rejects.toThrow(DecryptionError);
   });
 
   it("tampered ciphertext throws DecryptionError", async () => {
@@ -38,7 +38,7 @@ describe("crypto.ts", () => {
       cipher: cipherBytes.toString("base64"),
     };
 
-    expect(decrypt(tamperedVault, key)).rejects.toThrow(DecryptionError);
+    await expect(decrypt(tamperedVault, key)).rejects.toThrow(DecryptionError);
   });
 
   it("tampered auth tag throws DecryptionError", async () => {
@@ -54,7 +54,7 @@ describe("crypto.ts", () => {
       tag: tagBytes.toString("base64"),
     };
 
-    expect(decrypt(tamperedVault, key)).rejects.toThrow(DecryptionError);
+    await expect(decrypt(tamperedVault, key)).rejects.toThrow(DecryptionError);
   });
 
   it("IV is unique per encryption call", async () => {

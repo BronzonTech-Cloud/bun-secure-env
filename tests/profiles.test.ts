@@ -19,14 +19,14 @@ describe("profiles.ts", () => {
   });
 
   describe("readVaultFile", () => {
-    it("throws VaultNotFoundError if base vault is missing", () => {
-      expect(readVaultFile("non-existent-base.vault", false)).rejects.toThrow(
+    it("throws VaultNotFoundError if base vault is missing", async () => {
+      await expect(readVaultFile("non-existent-base.vault", false)).rejects.toThrow(
         VaultNotFoundError
       );
     });
 
-    it("throws ProfileNotFoundError if profile vault is missing", () => {
-      expect(readVaultFile("non-existent-profile.vault", true)).rejects.toThrow(
+    it("throws ProfileNotFoundError if profile vault is missing", async () => {
+      await expect(readVaultFile("non-existent-profile.vault", true)).rejects.toThrow(
         ProfileNotFoundError
       );
     });
@@ -35,7 +35,7 @@ describe("profiles.ts", () => {
       const tempPath = `/tmp/invalid-${Math.random().toString(36).substring(7)}.vault`;
       await Bun.write(tempPath, "BSENV_VERSION=1\nBSENV_ALGO=aes-256-gcm\n");
 
-      expect(readVaultFile(tempPath, false)).rejects.toThrow(DecryptionError);
+      await expect(readVaultFile(tempPath, false)).rejects.toThrow(DecryptionError);
     });
   });
 });

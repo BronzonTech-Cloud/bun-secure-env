@@ -141,7 +141,7 @@ describe("integration.test.ts", () => {
       PORT: z.string(),
     };
 
-    expect(
+    await expect(
       createEnv({
         vault: "/tmp/non-existent-vault-file.vault",
         key,
@@ -156,7 +156,7 @@ describe("integration.test.ts", () => {
       PORT: z.string(),
     };
 
-    expect(
+    await expect(
       createEnv({
         vault: "/tmp/some-vault.vault",
         schema,
