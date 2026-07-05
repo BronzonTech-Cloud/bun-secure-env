@@ -1,0 +1,133 @@
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('fonts/outfit-latin-300-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/outfit-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/outfit-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/outfit-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/outfit-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');
+}
+
+:root {
+  --bg: #0b0a0f;
+  --fg: #f4f4f7;
+  --border: rgba(167, 139, 250, 0.12);
+  --border-strong: rgba(167, 139, 250, 0.25);
+  --border-hover: rgba(167, 139, 250, 0.45);
+  --surface: #13111c;
+  --surface-hover: rgba(167, 139, 250, 0.08);
+  --muted: #a1a1aa;
+  --muted-fg: rgba(244, 244, 247, 0.65);
+  --code-bg: rgba(167, 139, 250, 0.08);
+  --pre-bg: #161421;
+  --link: #c084fc;
+  --scrollbar: rgba(167, 139, 250, 0.2);
+  --header-height: 81px;
+}
+
+[data-theme="light"] {
+  --bg: #faf9fc;
+  --fg: #1c1929;
+  --border: rgba(109, 40, 217, 0.08);
+  --border-strong: rgba(109, 40, 217, 0.15);
+  --border-hover: rgba(109, 40, 217, 0.3);
+  --surface: #f3f0fa;
+  --surface-hover: rgba(109, 40, 217, 0.05);
+  --muted: #71717a;
+  --muted-fg: rgba(28, 25, 41, 0.6);
+  --code-bg: rgba(109, 40, 217, 0.06);
+  --pre-bg: #f8f6fc;
+  --link: #7c3aed;
+  --scrollbar: rgba(109, 40, 217, 0.15);
+}
+
+/* Global Font Overrides with high specificity */
+body, html, button, input, select, textarea {
+  font-family: Outfit, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11" !important;
+}
+
+pre, code, kbd, samp {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.9em !important;
+}
+
+/* Custom Markdown Alert Styling */
+.markdown-alert {
+  border-left: 4px solid var(--border);
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.markdown-alert-note {
+  border-left-color: #a855f7 !important;
+}
+
+.markdown-alert-warning {
+  border-left-color: #f59e0b !important;
+}
+
+.markdown-alert-caution {
+  border-left-color: #ef4444 !important;
+}
+
+/* Interactive elements transition */
+a, button, .card, .btn, pre {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Add custom gradients and highlights to the landing page buttons / tags */
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3) !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4) !important;
+}

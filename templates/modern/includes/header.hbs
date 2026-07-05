@@ -1,0 +1,49 @@
+{{#if googleTagManager}}
+{{#if isGtag}}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{googleTagManager}}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','{{googleTagManager}}');</script>
+{{else}}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','{{googleTagManager}}');</script>
+<!-- End Google Tag Manager -->
+{{/if}}
+{{/if}}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{{#if description}}{{description}}{{else}}{{siteDescription}}{{/if}}">
+{{#if keywords}}<meta name="keywords" content="{{#each keywords}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}">
+{{/if}}
+{{> opengraph }}
+<link rel="stylesheet" href="{{baseUrl}}/css/variables.css">
+<link rel="stylesheet" href="{{baseUrl}}/css/styles.css">
+<link rel="stylesheet" href="{{baseUrl}}/css/highlight/styles/base16/docula.css">
+{{#if faviconUrl}}<link rel="icon" href="{{faviconUrl}}">{{/if}}
+<script>
+  (function(){
+    window.__doculaThemeKey = 'docula:theme:' + ({{#if siteUrl}}'{{siteUrl}}'{{else}}location.origin{{/if}}).replace(/^https?:\/\//, '');
+    var mode = localStorage.getItem(window.__doculaThemeKey) || {{#if themeMode}}'{{themeMode}}'{{else}}'system'{{/if}};
+    var resolved = mode === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+      : mode;
+    if (resolved === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    try {
+      var authState = JSON.parse(localStorage.getItem('docula-auth-state'));
+      if (authState) {
+        window.__doculaAuth = authState;
+        if (authState.loggedIn) {
+          document.documentElement.classList.add('docula-auth-logged-in');
+        }
+      }
+    } catch (e) {
+      // Ignore localStorage parsing errors
+    }
+    if (!window.__doculaAuth) {
+      window.__doculaAuth = { loggedIn: false, displayName: null };
+    }
+  })();
+</script>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> header }}
+  <link rel="stylesheet" href="{{baseUrl}}/css/api.css">
+  <title>API Reference - {{ siteTitle }}</title>
+  <meta name="description" content="API Reference for {{ siteTitle }}" />
+  {{{jsonLd}}}
+</head>
+
+<body>
+{{> body-scripts }}
+  {{> header-bar }}
+
+  {{#if apiSpecs}}
+  <div class="api-mobile-toggle">
+    <button id="api-sidebar-toggle">
+      <span>API Navigation</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>
+    </button>
+  </div>
+
+  <div class="api-reference">
+    <aside class="api-sidebar" id="api-sidebar">
+      <input type="text" class="api-search" id="api-search" placeholder="Search endpoints..." />
+
+      {{#each apiSpecs}}
+      {{#if this.apiSpec}}
+      <div class="api-sidebar__spec-heading">{{this.specName}}</div>
+      {{#each this.apiSpec.groups}}
+      <div class="api-sidebar__group" data-group="{{this.id}}">
+        {{#if this.name}}
+        <button class="api-sidebar__group-toggle">
+          <span>{{this.name}}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        {{/if}}
+        <div class="api-sidebar__group-items">
+          {{#each this.operations}}
+          <a href="#{{this.id}}" class="api-sidebar__item" data-method="{{this.method}}" data-path="{{this.path}}">
+            <span class="api-sidebar__item-path">{{this.path}}</span>
+            <span class="method-badge method-badge--{{this.method}}">{{this.methodShort}}</span>
+          </a>
+          {{/each}}
+        </div>
+      </div>
+      {{/each}}
+      {{/if}}
+      {{/each}}
+    </aside>
+
+    <main class="api-content">
+      {{#each apiSpecs}}
+      {{#if this.apiSpec}}
+      <div class="api-spec-container">
+        <section class="api-info">
+          <h1 class="api-info__title">{{this.apiSpec.info.title}}</h1>
+          {{#if this.apiSpec.info.version}}
+          <span class="api-info__version">v{{this.apiSpec.info.version}}</span>
+          {{/if}}
+          {{#if this.apiSpec.info.description}}
+          <div class="api-info__description">{{{this.apiSpec.info.description}}}</div>
+          {{/if}}
+          {{#if this.apiSpec.servers}}
+          <div class="api-info__servers">
+            <div class="api-info__server-label">Server</div>
+            {{#each this.apiSpec.servers}}
+            <code class="api-info__server-url">{{this.url}}</code>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{#if this.apiSpec.securitySchemes.length}}
+          <div class="api-auth">
+            <div class="api-auth__label">Authorization</div>
+            <div class="api-auth__controls">
+              <select class="api-auth__type" id="api-auth-type-{{@index}}">
+                <option value="none">None</option>
+                {{#each this.apiSpec.securitySchemes}}
+                <option value="{{this.key}}" data-scheme-type="{{this.type}}" data-scheme-scheme="{{this.scheme}}" data-scheme-name="{{this.name}}" data-scheme-in="{{this.in}}">{{this.description}}</option>
+                {{/each}}
+              </select>
+              <input type="password" class="api-auth__value api-auth__value--hidden" id="api-auth-value-{{@index}}" placeholder="Enter value..." />
+              <span class="api-auth__cookie-status api-auth__cookie-status--hidden" id="api-auth-cookie-status-{{@index}}"></span>
+            </div>
+          </div>
+          {{/if}}
+        </section>
+
+        {{#each this.apiSpec.groups}}
+        <div class="api-group" id="group-{{this.id}}">
+          {{#if this.name}}
+          <div class="api-group__header">
+            <h2 class="api-group__title">{{this.name}}</h2>
+            {{#if this.description}}
+            <div class="api-group__description">{{{this.description}}}</div>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#each this.operations}}
+          <div class="api-operation api-operation--collapsed" id="{{this.id}}">
+            <div class="api-operation__header" data-toggle="operation">
+              <span class="method-badge method-badge--{{this.method}}">{{this.methodUpper}}</span>
+              <span class="api-operation__path">{{this.path}}</span>
+              {{#if this.summary}}
+              <span class="api-operation__summary">{{this.summary}}</span>
+              {{/if}}
+              <svg class="api-operation__toggle-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+            <div class="api-operation__body">
+              <div class="api-operation__docs">
+                {{#if this.description}}
+                <div class="api-operation__description">{{{this.description}}}</div>
+                {{/if}}
+
+                {{#if this.parameters.length}}
+                <div class="api-section-title">Parameters</div>
+                <table class="api-params-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>In</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each this.parameters}}
+                    <tr>
+                      <td>
+                        <span class="api-param-name">{{this.name}}</span>
+                        {{#if this.required}}<span class="api-param-required">*</span>{{/if}}
+                      </td>
+                      <td><span class="api-param-type">{{this.type}}</span></td>
+                      <td><span class="api-param-in">{{this.in}}</span></td>
+                      <td><span class="api-param-desc">{{this.description}}</span></td>
+                    </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+                {{/if}}
+
+                {{#if this.requestBody}}
+                <div class="api-section-title">Request Body <span class="api-param-type">{{this.requestBody.contentType}}</span></div>
+                {{#if this.requestBody.schemaProperties.length}}
+                <div class="api-schema">
+                  <div class="api-schema-props">
+                    {{#each this.requestBody.schemaProperties}}
+                    <div class="api-schema-prop">
+                      <span class="api-schema-prop-name">{{this.name}}{{#if this.required}}<span class="api-param-required">*</span>{{/if}}</span>
+                      <span class="api-schema-prop-type">{{this.type}}</span>
+                      <span class="api-schema-prop-desc">{{this.description}}</span>
+                    </div>
+                    {{/each}}
+                  </div>
+                </div>
+                {{/if}}
+                {{#if this.requestBody.example}}
+                <div class="api-response__example">
+                  <pre><code>{{this.requestBody.example}}</code></pre>
+                </div>
+                {{/if}}
+                {{/if}}
+
+                {{#if this.responses.length}}
+                <div class="api-section-title">Responses</div>
+                {{#each this.responses}}
+                <div class="api-response">
+                  <div class="api-response__status">
+                    <span class="api-status-code api-status-code--{{this.statusClass}}">{{this.statusCode}}</span>
+                    <span class="api-response__desc">{{this.description}}</span>
+                  </div>
+                  {{#if this.schemaProperties.length}}
+                  <div class="api-schema">
+                    <div class="api-schema-props">
+                      {{#each this.schemaProperties}}
+                      <div class="api-schema-prop">
+                        <span class="api-schema-prop-name">{{this.name}}</span>
+                        <span class="api-schema-prop-type">{{this.type}}</span>
+                        <span class="api-schema-prop-desc">{{this.description}}</span>
+                      </div>
+                      {{/each}}
+                    </div>
+                  </div>
+                  {{/if}}
+                  {{#if this.example}}
+                  <div class="api-response__example">
+                    <pre><code>{{this.example}}</code></pre>
+                  </div>
+                  {{/if}}
+                </div>
+                {{/each}}
+                {{/if}}
+
+                <div class="api-code-examples">
+                  <div class="api-code-tabs">
+                    <button class="api-code-tab api-code-tab--active" data-tab="curl">cURL</button>
+                    <button class="api-code-tab" data-tab="javascript">JavaScript</button>
+                    <button class="api-code-tab" data-tab="python">Python</button>
+                  </div>
+                  <div class="api-code-panel api-code-panel--active" data-panel="curl">
+                    <button class="api-copy-btn" data-copy>Copy</button>
+                    <pre><code>{{this.codeExamples.curl}}</code></pre>
+                  </div>
+                  <div class="api-code-panel" data-panel="javascript">
+                    <button class="api-copy-btn" data-copy>Copy</button>
+                    <pre><code>{{this.codeExamples.javascript}}</code></pre>
+                  </div>
+                  <div class="api-code-panel" data-panel="python">
+                    <button class="api-copy-btn" data-copy>Copy</button>
+                    <pre><code>{{this.codeExamples.python}}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              {{> api-try-it }}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+      {{/each}}
+    </main>
+  </div>
+  {{/if}}
+
+  {{> footer }}
+  {{> scripts }}
+
+  <script src="{{baseUrl}}/js/api.js"></script>
+</body>
+
+</html>
