@@ -1,0 +1,19 @@
+# bun-secure-env
+
+Production-grade encrypted environment loader with AES-256-GCM, Zod validation, and profile merging for Bun.
+
+- [Full LLM Content](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/llms-full.txt)
+
+## Documentation
+- [Getting Started](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/docs/getting-started/)
+- [Core Concepts](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/docs/core-concepts/)
+- [Security](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/docs/security/)
+- [API Reference](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/docs/api-reference/)
+- [Troubleshooting](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/docs/troubleshooting/)
+
+## API Reference
+- Not available.
+
+## Changelog
+- [Changelog](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/changelog)
+- [Initial Release](https://bronzontech-cloud.github.io/bun-secure-env/bun-secure-env/changelog/v0-1-0) (June 30, 2026)
