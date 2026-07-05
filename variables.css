@@ -1,33 +1,33 @@
 @font-face {
-  font-family: 'Outfit';
+  font-family: Outfit;
   font-style: normal;
   font-weight: 300;
   font-display: swap;
   src: url('fonts/outfit-latin-300-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Outfit';
+  font-family: Outfit;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
   src: url('fonts/outfit-latin-400-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Outfit';
+  font-family: Outfit;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: url('fonts/outfit-latin-500-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Outfit';
+  font-family: Outfit;
   font-style: normal;
   font-weight: 600;
   font-display: swap;
   src: url('fonts/outfit-latin-600-normal.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Outfit';
+  font-family: Outfit;
   font-style: normal;
   font-weight: 700;
   font-display: swap;
@@ -83,7 +83,7 @@
 
 /* Global Font Overrides with high specificity */
 body, html, button, input, select, textarea {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  font-family: Outfit, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11" !important;
 }
 
