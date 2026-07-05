@@ -20,7 +20,7 @@ This guide addresses common errors and gotchas when working with `bun-secure-env
         echo $VAULT_KEY
         ```
     *   If you are passing the key explicitly to `createEnv({ key })`, ensure it is not undefined or empty.
-    *   Ensure the key is a valid base64-encoded 32-byte string (exactly 44 characters long, ending with one or two `=` padding characters).
+    *   Ensure the key is a valid base64-encoded string (standard or URL-safe, with or without padding, typically 43 or 44 characters long) that decodes to exactly 32 bytes of raw key material.
 
 ---
 

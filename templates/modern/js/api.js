@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
         navigator.clipboard.writeText(code.textContent).then(function() {
           btn.textContent = 'Copied!';
           setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+        }).catch(function() {
+          btn.textContent = 'Failed';
+          setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
         });
       }
     });
@@ -106,65 +109,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Auth type selector: show/hide value input based on OpenAPI securitySchemes
-  // IDs are indexed for multi-spec (e.g. api-auth-type-0), so find by class
-  var authTypeSelect = document.querySelector('.api-auth__type');
-  var authValueInput = document.querySelector('.api-auth__value');
-  var cookieStatusEl = document.querySelector('.api-auth__cookie-status');
-  if (authTypeSelect && authValueInput) {
-    function getSelectedSchemeData() {
-      var option = authTypeSelect.options[authTypeSelect.selectedIndex];
-      return {
-        key: option.value,
-        type: option.getAttribute('data-scheme-type'),
-        scheme: option.getAttribute('data-scheme-scheme'),
-        name: option.getAttribute('data-scheme-name'),
-        inLocation: option.getAttribute('data-scheme-in')
-      };
-    }
-    function updateAuthUI() {
-      var data = getSelectedSchemeData();
-      if (data.key === 'none') {
-        authValueInput.classList.add('api-auth__value--hidden');
-        authValueInput.value = '';
-        if (cookieStatusEl) cookieStatusEl.classList.add('api-auth__cookie-status--hidden');
-      } else if (data.type === 'apiKey' && data.inLocation === 'cookie') {
-        authValueInput.classList.add('api-auth__value--hidden');
-        authValueInput.value = '';
-        if (cookieStatusEl) {
-          cookieStatusEl.classList.remove('api-auth__cookie-status--hidden');
-          var auth = window.__doculaAuth || { loggedIn: false };
-          cookieStatusEl.textContent = auth.loggedIn ? 'Logged in' : 'Not logged in — use Login button above';
-          cookieStatusEl.className = 'api-auth__cookie-status' + (auth.loggedIn ? ' api-auth__cookie-status--ok' : ' api-auth__cookie-status--warn');
-        }
-      } else {
-        authValueInput.classList.remove('api-auth__value--hidden');
-        if (data.type === 'apiKey') {
-          authValueInput.placeholder = 'Enter API key...';
-        } else if (data.scheme === 'bearer') {
-          authValueInput.placeholder = 'Enter bearer token...';
+  // Auth type selector: scoped per .api-spec-container for multi-spec support
+  document.querySelectorAll('.api-spec-container').forEach(function(container) {
+    var authTypeSelect = container.querySelector('.api-auth__type');
+    var authValueInput = container.querySelector('.api-auth__value');
+    var cookieStatusEl = container.querySelector('.api-auth__cookie-status');
+    if (authTypeSelect && authValueInput) {
+      function getSelectedSchemeData() {
+        var option = authTypeSelect.options[authTypeSelect.selectedIndex];
+        return {
+          key: option.value,
+          type: option.getAttribute('data-scheme-type'),
+          scheme: option.getAttribute('data-scheme-scheme'),
+          name: option.getAttribute('data-scheme-name'),
+          inLocation: option.getAttribute('data-scheme-in')
+        };
+      }
+      function updateAuthUI() {
+        var data = getSelectedSchemeData();
+        if (data.key === 'none') {
+          authValueInput.classList.add('api-auth__value--hidden');
+          authValueInput.value = '';
+          if (cookieStatusEl) cookieStatusEl.classList.add('api-auth__cookie-status--hidden');
+        } else if (data.type === 'apiKey' && data.inLocation === 'cookie') {
+          authValueInput.classList.add('api-auth__value--hidden');
+          authValueInput.value = '';
+          if (cookieStatusEl) {
+            cookieStatusEl.classList.remove('api-auth__cookie-status--hidden');
+            var auth = window.__doculaAuth || { loggedIn: false };
+            cookieStatusEl.textContent = auth.loggedIn ? 'Logged in' : 'Not logged in — use Login button above';
+            cookieStatusEl.className = 'api-auth__cookie-status' + (auth.loggedIn ? ' api-auth__cookie-status--ok' : ' api-auth__cookie-status--warn');
+          }
         } else {
-          authValueInput.placeholder = 'Enter value...';
-        }
-        if (cookieStatusEl) cookieStatusEl.classList.add('api-auth__cookie-status--hidden');
-      }
-    }
-    var savedAuth = localStorage.getItem('docula-api-auth-type');
-    if (savedAuth) {
-      for (var i = 0; i < authTypeSelect.options.length; i++) {
-        if (authTypeSelect.options[i].value === savedAuth) {
-          authTypeSelect.selectedIndex = i;
-          break;
+          authValueInput.classList.remove('api-auth__value--hidden');
+          if (data.type === 'apiKey') {
+            authValueInput.placeholder = 'Enter API key...';
+          } else if (data.scheme === 'bearer') {
+            authValueInput.placeholder = 'Enter bearer token...';
+          } else {
+            authValueInput.placeholder = 'Enter value...';
+          }
+          if (cookieStatusEl) cookieStatusEl.classList.add('api-auth__cookie-status--hidden');
         }
       }
-    }
-    authTypeSelect.addEventListener('change', function() {
-      localStorage.setItem('docula-api-auth-type', authTypeSelect.value);
+      var storageKey = 'docula-api-auth-type-' + authTypeSelect.id;
+      var savedAuth = localStorage.getItem(storageKey);
+      if (savedAuth) {
+        for (var i = 0; i < authTypeSelect.options.length; i++) {
+          if (authTypeSelect.options[i].value === savedAuth) {
+            authTypeSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      authTypeSelect.addEventListener('change', function() {
+        localStorage.setItem(storageKey, authTypeSelect.value);
+        updateAuthUI();
+      });
+      document.addEventListener('docula-auth-change', updateAuthUI);
       updateAuthUI();
-    });
-    document.addEventListener('docula-auth-change', updateAuthUI);
-    updateAuthUI();
-  }
+    }
+  });
 
   // Helper: expand an operation and its corresponding sidebar group
   function expandOperationAndGroup(operationEl) {
@@ -273,9 +278,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (value) headers[name] = value;
       });
 
-      // Inject global auth header from selected security scheme
-      var authType = document.querySelector('.api-auth__type');
-      var authValue = document.querySelector('.api-auth__value');
+      // Inject global auth header from the spec container that owns this try-it
+      var specContainer = tryIt.closest('.api-spec-container');
+      var authType = specContainer ? specContainer.querySelector('.api-auth__type') : null;
+      var authValue = specContainer ? specContainer.querySelector('.api-auth__value') : null;
       var useCookieAuth = false;
       if (authType && authType.value !== 'none') {
         var authOption = authType.options[authType.selectedIndex];
@@ -306,7 +312,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       var url = baseUrl + path + queryString;
-      var fetchOptions = { method: method, headers: headers };
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
+      var fetchOptions = { method: method, headers: headers, signal: controller.signal };
       if (useCookieAuth) {
         fetchOptions.credentials = 'include';
       }
@@ -326,6 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var headersEl = tryIt.querySelector('[data-try-response-headers]');
 
       fetch(url, fetchOptions).then(function(response) {
+        clearTimeout(timeoutId);
         var elapsed = Math.round(performance.now() - startTime);
         var statusClass = getStatusClass(response.status);
 
@@ -347,11 +356,15 @@ document.addEventListener('DOMContentLoaded', function() {
           resetResponseTabs(responseArea);
         });
       }).catch(function(err) {
+        clearTimeout(timeoutId);
         statusEl.textContent = 'Error';
         statusEl.className = 'api-try-it__response-status api-try-it__response-status--error';
         timeEl.textContent = '';
         headersEl.textContent = '';
-        bodyEl.textContent = 'Request failed: ' + err.message + '\n\nThis may be caused by CORS restrictions. The API server must include appropriate CORS headers to allow browser requests.';
+        var isTimeout = err.name === 'AbortError';
+        bodyEl.textContent = isTimeout
+          ? 'Request timed out after 30 seconds.\n\nThe server did not respond in time.'
+          : 'Request failed: ' + err.message + '\n\nThis may be caused by CORS restrictions. The API server must include appropriate CORS headers to allow browser requests.';
         responseArea.classList.remove('api-try-it__response--hidden');
         resetResponseTabs(responseArea);
       }).finally(function() {
